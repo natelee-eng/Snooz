@@ -1,0 +1,2185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#111827" id="themeMeta">
+<title>Snooz</title>
+
+<style>
+:root {
+  --bg:#111827;
+  --bg2:#1b2540;
+  --panel:#202b42;
+  --field:#131d30;
+  --text:#edf1fc;
+  --muted:#aab7cf;
+  --accent:#a8b9ff;
+  --accent2:#cbb7f5;
+  --on-accent:#141b32;
+  --border:#38445e;
+  --overlay:#0e1627;
+}
+
+* { box-sizing:border-box; }
+
+body {
+  margin:0;
+  min-height:100vh;
+  background:radial-gradient(
+    ellipse at top,
+    var(--bg2),
+    var(--bg) 75%
+  );
+  color:var(--text);
+  font-family:system-ui,-apple-system,Arial,sans-serif;
+}
+
+button,input,textarea { font:inherit; }
+button { cursor:pointer; }
+button:disabled { opacity:.45;cursor:not-allowed; }
+h1,h2,h3,p { margin-top:0; }
+.hidden { display:none!important; }
+.center { text-align:center; }
+
+.helper {
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.6;
+}
+
+.shell {
+  max-width:440px;
+  margin:auto;
+  padding:24px 18px 55px;
+}
+
+.top {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:28px;
+  gap:12px;
+}
+
+.brand {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-size:18px;
+  font-weight:750;
+}
+
+.logo {
+  display:grid;
+  place-items:center;
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  background:var(--panel);
+  color:var(--accent);
+  font-size:25px;
+}
+
+.date {
+  color:var(--muted);
+  font-size:12px;
+  font-weight:400;
+}
+
+.iconbutton {
+  min-width:44px;
+  min-height:44px;
+  border:1px solid var(--border);
+  border-radius:14px;
+  background:var(--panel);
+  color:var(--text);
+  font-size:23px;
+}
+
+.welcome {
+  font-size:32px;
+  letter-spacing:-1px;
+  line-height:1.15;
+}
+
+.subtitle {
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.6;
+}
+
+.card {
+  margin-top:18px;
+  padding:20px;
+  border:1px solid var(--border);
+  border-radius:22px;
+  background:var(--panel);
+  box-shadow:0 15px 35px #0002;
+}
+
+.card h2 { font-size:18px; }
+
+.field { margin:17px 0; }
+
+label {
+  display:block;
+  margin-bottom:8px;
+  font-size:13px;
+  font-weight:650;
+}
+
+input:not([type=range]),textarea {
+  width:100%;
+  min-height:48px;
+  padding:12px;
+  border:1px solid var(--border);
+  border-radius:13px;
+  background:var(--field);
+  color:var(--text);
+  outline:none;
+}
+
+textarea {
+  min-height:120px;
+  resize:vertical;
+  line-height:1.5;
+}
+
+input:focus,textarea:focus {
+  border-color:var(--accent);
+}
+
+input[type=time] { color-scheme:dark; }
+
+.primary,.secondary {
+  width:100%;
+  min-height:48px;
+  padding:12px;
+  border-radius:13px;
+  font-weight:700;
+}
+
+.primary {
+  border:0;
+  background:var(--accent);
+  color:var(--on-accent);
+}
+
+.secondary {
+  border:1px solid var(--border);
+  background:var(--field);
+  color:var(--text);
+}
+
+.linkbutton {
+  border:0;
+  padding:10px;
+  background:transparent;
+  color:var(--accent);
+  font-weight:650;
+}
+
+.status {
+  color:var(--accent);
+  font-size:12px;
+  font-weight:700;
+}
+
+.statusline {
+  min-height:20px;
+  margin:10px 0;
+  color:var(--accent);
+  font-size:13px;
+}
+
+.error { color:#ffb9c4!important; }
+
+.timer {
+  margin:25px 0 5px;
+  text-align:center;
+  font-size:clamp(40px,12vw,62px);
+  font-weight:350;
+  letter-spacing:-3px;
+  font-variant-numeric:tabular-nums;
+}
+
+.timerlabel {
+  min-height:20px;
+  text-align:center;
+  color:var(--muted);
+  font-size:12px;
+}
+
+.progress {
+  height:6px;
+  margin:22px 0;
+  overflow:hidden;
+  border-radius:20px;
+  background:var(--field);
+}
+
+.fill {
+  height:100%;
+  width:0%;
+  background:linear-gradient(
+    90deg,var(--accent),var(--accent2)
+  );
+}
+
+.stats {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.stat {
+  padding:13px;
+  border-radius:13px;
+  background:var(--field);
+}
+
+.stat strong {
+  display:block;
+  margin-top:5px;
+  font-size:15px;
+}
+
+.row {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.auth {
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  padding:22px;
+}
+
+.authinner {
+  width:min(100%,410px);
+}
+
+.moonbig {
+  margin-bottom:15px;
+  color:var(--accent);
+  font-size:52px;
+  text-align:center;
+}
+
+.overlay {
+  position:fixed;
+  inset:0;
+  z-index:100;
+  display:grid;
+  place-items:center;
+  overflow:auto;
+  padding:22px;
+  background:var(--overlay);
+}
+
+.overlayinner {
+  width:min(100%,390px);
+  max-height:94vh;
+  overflow-y:auto;
+  text-align:center;
+}
+
+.overlayinner h2 {
+  font-size:28px;
+}
+
+.textbutton {
+  margin-top:18px;
+  padding:10px;
+  border:0;
+  background:transparent;
+  color:var(--muted);
+  font-size:12px;
+  text-decoration:underline;
+}
+
+.themegrid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin:18px 0;
+}
+
+.themechoice {
+  min-height:85px;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:10px;
+  padding:12px;
+  border:2px solid var(--border);
+  border-radius:13px;
+  background:var(--field);
+  color:var(--text);
+  text-align:left;
+}
+
+.themechoice[aria-pressed=true] {
+  border-color:var(--accent);
+}
+
+.swatches {
+  display:flex;
+  gap:5px;
+}
+
+.swatches i {
+  width:22px;
+  height:22px;
+  border:1px solid #ffffff44;
+  border-radius:50%;
+}
+
+.settings-section {
+  margin-top:22px;
+  padding-top:20px;
+  border-top:1px solid var(--border);
+  text-align:left;
+}
+
+.slider-value {
+  margin:14px 0;
+  color:var(--accent);
+  font-size:27px;
+  font-weight:750;
+}
+
+input[type=range] {
+  width:100%;
+  accent-color:var(--accent);
+}
+
+.rangeends {
+  display:flex;
+  justify-content:space-between;
+  color:var(--muted);
+  font-size:11px;
+}
+
+.historyrow {
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 0;
+  border-bottom:1px solid var(--border);
+  font-size:12px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN AND SIGN UP -->
+
+<section id="authScreen" class="auth">
+  <div class="authinner">
+
+    <div class="center">
+      <div class="moonbig">☾</div>
+      <h1>Snooz</h1>
+      <p class="subtitle">
+        A gentler way to finish your day.
+      </p>
+    </div>
+
+    <div class="card">
+
+      <h2 id="authTitle">Welcome back</h2>
+
+      <p class="helper" id="authHint">
+        Log in to your bedtime routine.
+      </p>
+
+      <form id="authForm">
+
+        <div class="field hidden" id="nameField">
+          <label for="authName">Your first name</label>
+          <input
+            id="authName"
+            autocomplete="given-name"
+            maxlength="60"
+          >
+        </div>
+
+        <div class="field">
+          <label for="authEmail">Email</label>
+          <input
+            id="authEmail"
+            type="email"
+            autocomplete="email"
+            required
+          >
+        </div>
+
+        <div class="field">
+          <label for="authPassword">Password</label>
+          <input
+            id="authPassword"
+            type="password"
+            minlength="8"
+            autocomplete="current-password"
+            required
+          >
+        </div>
+
+        <button class="primary" id="authSubmit">
+          Log in
+        </button>
+
+      </form>
+
+      <p id="authMessage" class="statusline"></p>
+
+      <div class="center">
+        <button
+          id="authToggle"
+          class="linkbutton"
+          type="button"
+        >
+          Don't have an account? Sign up
+        </button>
+      </div>
+
+      <p class="helper">
+        Accounts in this version are saved locally
+        on this browser only.
+      </p>
+
+    </div>
+  </div>
+</section>
+
+<!-- MAIN APP -->
+
+<main id="mainApp" class="shell hidden">
+
+  <header class="top">
+
+    <div class="brand">
+
+      <div class="logo">☾</div>
+
+      <div>
+        <div id="brandName">Snooz</div>
+        <div class="date" id="todayDate"></div>
+      </div>
+
+    </div>
+
+    <button
+      id="settingsButton"
+      class="iconbutton"
+      aria-label="Settings"
+      type="button"
+    >
+      ⚙
+    </button>
+
+  </header>
+
+  <h1 class="welcome" id="welcomeName">
+    Rest easy tonight.
+  </h1>
+
+  <p class="subtitle">
+    Set your bedtime and let Snooz help you
+    put your phone away.
+  </p>
+
+  <!-- BEDTIME CARD -->
+
+  <section class="card">
+
+    <div class="row">
+      <h2>Automatic bedtime</h2>
+      <span class="status" id="status">Not set</span>
+    </div>
+
+    <p class="helper">
+      Your 10-minute buffer starts exactly at your
+      saved bedtime.
+    </p>
+
+    <form id="bedtimeForm">
+
+      <div class="field">
+
+        <label for="bedtimeInput">
+          What time do you want to go to bed?
+        </label>
+
+        <input id="bedtimeInput" type="time" required>
+
+        <p class="helper">
+          Press Enter or Save bedtime to confirm changes.
+        </p>
+
+      </div>
+
+      <button class="primary" type="submit">
+        Save bedtime
+      </button>
+
+    </form>
+
+    <p class="statusline" id="bedtimeMessage"></p>
+
+    <div class="stat">
+      <span class="helper">Your sleep goal</span>
+      <strong>8 Hours of Rest</strong>
+    </div>
+
+    <div class="timer" id="timer">--:--</div>
+
+    <div class="timerlabel" id="timerLabel">
+      Choose your bedtime.
+    </div>
+
+    <div
+      class="progress"
+      id="progress"
+      role="progressbar"
+      aria-label="Time remaining"
+      aria-valuemin="0"
+      aria-valuemax="600"
+      aria-valuenow="0"
+    >
+      <div class="fill" id="fill"></div>
+    </div>
+
+    <div class="stats">
+
+      <div class="stat">
+        <span class="helper">Buffer starts</span>
+        <strong id="startsAt">Not set</strong>
+      </div>
+
+      <div class="stat">
+        <span class="helper">Phone away</span>
+        <strong id="endsAt">Not set</strong>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- MORNING CHECK-IN -->
+
+  <section class="card">
+
+    <h2>Morning check-in</h2>
+
+    <p class="helper">
+      Track when you entered bed and roughly
+      how much you slept.
+    </p>
+
+    <form id="sleepForm">
+
+      <div class="field">
+        <label for="actualBedtime">
+          Time entered bed
+        </label>
+        <input id="actualBedtime" type="time" required>
+      </div>
+
+      <div class="field">
+        <label for="hoursSlept">
+          Estimated hours slept
+        </label>
+        <input
+          id="hoursSlept"
+          type="number"
+          min="0"
+          max="24"
+          step="0.5"
+          placeholder="e.g. 7.5"
+          required
+        >
+      </div>
+
+      <button class="primary">
+        Save morning check-in
+      </button>
+
+    </form>
+
+    <p class="statusline" id="sleepMessage"></p>
+
+    <div id="history"></div>
+
+  </section>
+
+  <p class="helper center" style="margin-top:25px">
+    Snooz — a softer way to disconnect.
+  </p>
+
+</main>
+
+<!-- SETTINGS -->
+
+<section
+  id="settingsOverlay"
+  class="overlay hidden"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="settingsTitle"
+>
+
+  <div class="overlayinner">
+
+    <h2 id="settingsTitle">Settings</h2>
+
+    <p class="subtitle">
+      Customize your Snooz experience.
+    </p>
+
+    <h3>Appearance</h3>
+
+    <div id="themeChoices" class="themegrid"></div>
+
+    <!-- NOTIFICATIONS -->
+
+    <div class="settings-section">
+
+      <h3>Bedtime notifications</h3>
+
+      <p class="helper">
+        Snooz can remind you when your bedtime
+        begins, when five minutes remain,
+        and when it's time to sleep.
+      </p>
+
+      <button
+        class="primary"
+        id="notificationToggle"
+        type="button"
+      >
+        Enable notifications
+      </button>
+
+      <button
+        class="secondary"
+        id="testNotification"
+        type="button"
+        style="margin-top:10px"
+      >
+        Send test notification
+      </button>
+
+      <p class="statusline" id="notificationStatus"></p>
+
+    </div>
+
+    <!-- ACCOUNT -->
+
+    <div class="settings-section">
+
+      <h3>Account</h3>
+
+      <p class="helper" id="settingsEmail"></p>
+
+      <button
+        class="secondary"
+        id="logoutButton"
+        type="button"
+      >
+        Log out
+      </button>
+
+    </div>
+
+    <button
+      class="textbutton"
+      id="closeSettings"
+      type="button"
+    >
+      Close settings
+    </button>
+
+  </div>
+</section>
+
+<!-- NIGHT SCREEN -->
+
+<section
+  id="nightOverlay"
+  class="overlay hidden"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="nightTitle"
+>
+
+  <div class="overlayinner">
+
+    <div id="nightNormal">
+
+      <div class="moonbig">☾</div>
+
+      <h2 id="nightTitle">
+        That's enough for tonight.
+      </h2>
+
+      <p class="subtitle">
+        Your 10-minute buffer has ended.
+        It's time to put your phone away.
+      </p>
+
+      <div class="card">
+        <span class="status">Your sleep goal</span>
+        <h3 style="margin:10px 0 0">
+          8 Hours of Rest
+        </h3>
+      </div>
+
+      <button
+        class="primary"
+        id="sleepDone"
+        type="button"
+        style="margin-top:20px"
+      >
+        Put phone away
+      </button>
+
+      <button
+        id="openOverride"
+        class="textbutton"
+        type="button"
+      >
+        Need more time? Emergency override
+      </button>
+
+    </div>
+
+    <!-- EMERGENCY OVERRIDE -->
+
+    <div id="overridePanel" class="hidden">
+
+      <h2>Emergency override</h2>
+
+      <p class="subtitle">
+        Explain what you need to finish tonight
+        in at least 15 words.
+      </p>
+
+      <div class="field">
+
+        <label for="reason">
+          What exactly do you need to do?
+        </label>
+
+        <textarea
+          id="reason"
+          placeholder="Describe what you need to finish, why it is important, and how you plan to complete it."
+        ></textarea>
+
+        <p class="helper" id="wordCount">
+          0 / 15 words minimum
+        </p>
+
+      </div>
+
+      <div class="field">
+
+        <label for="minutesSlider">
+          How much time do you need?
+        </label>
+
+        <div class="slider-value" id="sliderValue">
+          15 minutes
+        </div>
+
+        <input
+          type="range"
+          id="minutesSlider"
+          min="5"
+          max="120"
+          step="5"
+          value="15"
+        >
+
+        <div class="rangeends">
+          <span>5 min</span>
+          <span>120 min</span>
+        </div>
+
+      </div>
+
+      <div class="card">
+
+        <p class="helper">Total extension</p>
+
+        <h2 id="extensionTotal">25 minutes</h2>
+
+        <p class="helper">
+          Includes 10 additional minutes.
+        </p>
+
+      </div>
+
+      <p class="statusline error" id="overrideMessage"></p>
+
+      <button
+        class="primary"
+        id="grantOverride"
+        type="button"
+        disabled
+      >
+        Request extra time
+      </button>
+
+      <button
+        class="secondary"
+        id="cancelOverride"
+        type="button"
+        style="margin-top:10px"
+      >
+        Go back
+      </button>
+
+    </div>
+
+  </div>
+</section>
+
+<script>
+(() => {
+  "use strict";
+
+  // ================================
+  // CONFIGURATION
+  // ================================
+
+  const $ = id => document.getElementById(id);
+
+  const BUFFER_MS = 10 * 60 * 1000;
+
+  // Keep the older storage key names so
+  // existing Goodnight accounts can remain usable.
+
+  const ACCOUNTS_KEY =
+    "goodnight-demo-accounts-v1";
+
+  const SESSION_KEY =
+    "goodnight-demo-session-v1";
+
+  let account = null;
+  let currentEmail = null;
+  let signupMode = false;
+
+  // ================================
+  // THEMES
+  // ================================
+
+  const THEMES = {
+
+    midnight:{
+      name:"Midnight Blue",
+      bg:"#111827",
+      bg2:"#1b2540",
+      panel:"#202b42",
+      field:"#131d30",
+      text:"#edf1fc",
+      muted:"#aab7cf",
+      accent:"#a8b9ff",
+      accent2:"#cbb7f5",
+      onAccent:"#141b32",
+      border:"#38445e",
+      overlay:"#0e1627"
+    },
+
+    blue:{
+      name:"Blue & Lavender",
+      bg:"#101b2c",
+      bg2:"#223454",
+      panel:"#21334d",
+      field:"#14243b",
+      text:"#eff2ff",
+      muted:"#b6c3dc",
+      accent:"#9cbfff",
+      accent2:"#c8b8f7",
+      onAccent:"#10203b",
+      border:"#3c506b",
+      overlay:"#0c182a"
+    },
+
+    pink:{
+      name:"Purple & Pink",
+      bg:"#201729",
+      bg2:"#382840",
+      panel:"#35283d",
+      field:"#261b31",
+      text:"#f6edf6",
+      muted:"#d2bed2",
+      accent:"#d8b3e9",
+      accent2:"#f1b7ce",
+      onAccent:"#291b34",
+      border:"#54405b",
+      overlay:"#1c1425"
+    },
+
+    sage:{
+      name:"Sage & Teal",
+      bg:"#142421",
+      bg2:"#26403a",
+      panel:"#243a35",
+      field:"#172b27",
+      text:"#eaf5ef",
+      muted:"#b4cec3",
+      accent:"#a3dac4",
+      accent2:"#addbd8",
+      onAccent:"#142c25",
+      border:"#405d52",
+      overlay:"#101e1c"
+    },
+
+    rose:{
+      name:"Rose & Mauve",
+      bg:"#261e28",
+      bg2:"#41323f",
+      panel:"#3a2f3d",
+      field:"#2a2231",
+      text:"#f7eff4",
+      muted:"#d4c3d0",
+      accent:"#e5b9ce",
+      accent2:"#cbbbec",
+      onAccent:"#312135",
+      border:"#574859",
+      overlay:"#201922"
+    }
+
+  };
+
+  // ================================
+  // ACCOUNT STORAGE
+  // ================================
+
+  function readAccounts() {
+    try {
+      return JSON.parse(
+        localStorage.getItem(ACCOUNTS_KEY)
+      ) || {};
+    } catch {
+      return {};
+    }
+  }
+
+  function saveAccount() {
+    if (!account || !currentEmail) return;
+
+    const accounts = readAccounts();
+
+    accounts[currentEmail] = account;
+
+    localStorage.setItem(
+      ACCOUNTS_KEY,
+      JSON.stringify(accounts)
+    );
+  }
+
+  // ================================
+  // PASSWORD HASHING
+  // ================================
+
+  // Local demonstration only.
+  // Real secure accounts need a backend.
+
+  function hex(bytes) {
+    return Array.from(
+      bytes,
+      value => value.toString(16).padStart(2,"0")
+    ).join("");
+  }
+
+  async function hashPassword(password,salt) {
+
+    if (!crypto?.subtle) {
+      throw new Error(
+        "Open Snooz using localhost or HTTPS to use accounts."
+      );
+    }
+
+    const input = new TextEncoder().encode(
+      salt + ":" + password
+    );
+
+    const digest = await crypto.subtle.digest(
+      "SHA-256",
+      input
+    );
+
+    return hex(new Uint8Array(digest));
+  }
+
+  // ================================
+  // LOGIN / SIGNUP
+  // ================================
+
+  function setSignupMode(enabled) {
+
+    signupMode = enabled;
+
+    $("authTitle").textContent = enabled
+      ? "Create your account"
+      : "Welcome back";
+
+    $("authHint").textContent = enabled
+      ? "Start building your Snooz bedtime routine."
+      : "Log in to your Snooz account.";
+
+    $("nameField").classList.toggle(
+      "hidden",!enabled
+    );
+
+    $("authName").required = enabled;
+
+    $("authSubmit").textContent = enabled
+      ? "Sign up"
+      : "Log in";
+
+    $("authToggle").textContent = enabled
+      ? "Already have an account? Log in"
+      : "Don't have an account? Sign up";
+
+    $("authPassword").autocomplete = enabled
+      ? "new-password"
+      : "current-password";
+
+    $("authMessage").textContent = "";
+  }
+
+  $("authToggle").onclick = () => {
+    setSignupMode(!signupMode);
+  };
+
+  $("authForm").addEventListener(
+    "submit",
+    async event => {
+
+      event.preventDefault();
+
+      const email =
+        $("authEmail").value.trim().toLowerCase();
+
+      const password =
+        $("authPassword").value;
+
+      const name =
+        $("authName").value.trim();
+
+      const accounts = readAccounts();
+
+      $("authSubmit").disabled = true;
+
+      try {
+
+        if (signupMode) {
+
+          if (!name) {
+            throw new Error("Please enter your name.");
+          }
+
+          if (accounts[email]) {
+            throw new Error(
+              "An account with this email already exists."
+            );
+          }
+
+          const salt = hex(
+            crypto.getRandomValues(
+              new Uint8Array(16)
+            )
+          );
+
+          accounts[email] = {
+            name,
+            email,
+            salt,
+            hash:await hashPassword(password,salt),
+
+            theme:"midnight",
+
+            bedtime:null,
+            nextStart:null,
+
+            extensionEnd:null,
+            extensionMinutes:0,
+            extensionReason:"",
+
+            dismissed:false,
+            history:[],
+
+            notificationsEnabled:false,
+            notifiedEvents:[]
+          };
+
+          localStorage.setItem(
+            ACCOUNTS_KEY,
+            JSON.stringify(accounts)
+          );
+
+        } else {
+
+          const existing = accounts[email];
+
+          if (!existing) {
+            throw new Error(
+              "Incorrect email or password."
+            );
+          }
+
+          const hash = await hashPassword(
+            password,
+            existing.salt
+          );
+
+          // Accept previously stored local hashes.
+          const savedHash =
+            existing.hash || existing.passwordHash;
+
+          if (hash !== savedHash) {
+            throw new Error(
+              "Incorrect email or password."
+            );
+          }
+        }
+
+        login(email,accounts[email]);
+
+      } catch(error) {
+
+        $("authMessage").textContent =
+          error.message;
+
+        $("authMessage").classList.add("error");
+
+      } finally {
+
+        $("authSubmit").disabled = false;
+      }
+    }
+  );
+
+  function login(email,data) {
+
+    currentEmail = email;
+    account = data;
+
+    sessionStorage.setItem(SESSION_KEY,email);
+
+    $("authScreen").classList.add("hidden");
+    $("mainApp").classList.remove("hidden");
+
+    $("brandName").textContent =
+      `Snooz, ${account.name}`;
+
+    $("welcomeName").textContent =
+      `Rest easy, ${account.name}.`;
+
+    $("settingsEmail").textContent = email;
+
+    $("bedtimeInput").value =
+      account.bedtime || "";
+
+    $("todayDate").textContent =
+      new Date().toLocaleDateString(undefined,{
+        weekday:"short",
+        month:"short",
+        day:"numeric"
+      });
+
+    applyTheme(account.theme || "midnight");
+
+    renderHistory();
+    updateNotificationControls();
+    update();
+  }
+
+  function logout() {
+
+    sessionStorage.removeItem(SESSION_KEY);
+
+    account = null;
+    currentEmail = null;
+
+    $("mainApp").classList.add("hidden");
+    $("authScreen").classList.remove("hidden");
+
+    $("settingsOverlay").classList.add("hidden");
+    $("nightOverlay").classList.add("hidden");
+
+    $("authForm").reset();
+
+    setSignupMode(false);
+  }
+
+  $("logoutButton").onclick = logout;
+
+  // ================================
+  // THEME SYSTEM
+  // ================================
+
+  function applyTheme(key) {
+
+    const theme = THEMES[key] || THEMES.midnight;
+
+    Object.entries(theme).forEach(
+      ([property,value]) => {
+
+        if (property === "name") return;
+
+        const cssName =
+          "--" + property.replace(
+            /[A-Z]/g,
+            letter => "-" + letter.toLowerCase()
+          );
+
+        document.documentElement.style.setProperty(
+          cssName,value
+        );
+      }
+    );
+
+    $("themeMeta").content = theme.bg;
+
+    document.querySelectorAll(
+      ".themechoice"
+    ).forEach(button => {
+
+      button.setAttribute(
+        "aria-pressed",
+        String(button.dataset.theme === key)
+      );
+
+    });
+  }
+
+  Object.entries(THEMES).forEach(
+    ([key,theme]) => {
+
+      const button =
+        document.createElement("button");
+
+      button.className = "themechoice";
+      button.type = "button";
+      button.dataset.theme = key;
+
+      const swatches =
+        document.createElement("span");
+
+      swatches.className = "swatches";
+
+      [
+        theme.bg,
+        theme.accent,
+        theme.accent2
+      ].forEach(color => {
+
+        const dot = document.createElement("i");
+
+        dot.style.background = color;
+        swatches.append(dot);
+      });
+
+      const label =
+        document.createElement("span");
+
+      label.textContent = theme.name;
+
+      button.append(swatches,label);
+
+      button.onclick = () => {
+
+        if (!account) return;
+
+        account.theme = key;
+        saveAccount();
+        applyTheme(key);
+      };
+
+      $("themeChoices").append(button);
+    }
+  );
+
+  $("settingsButton").onclick = () => {
+    $("settingsOverlay").classList.remove("hidden");
+  };
+
+  $("closeSettings").onclick = () => {
+    $("settingsOverlay").classList.add("hidden");
+  };
+
+  // ================================
+  // BROWSER NOTIFICATIONS
+  // ================================
+
+  function notificationsAvailable() {
+    return (
+      "Notification" in window &&
+      window.isSecureContext
+    );
+  }
+
+  function updateNotificationControls() {
+
+    const supported = notificationsAvailable();
+
+    const granted = supported &&
+      Notification.permission === "granted";
+
+    $("notificationToggle").textContent =
+      account?.notificationsEnabled
+        ? "Disable notifications"
+        : "Enable notifications";
+
+    $("notificationToggle").disabled =
+      !supported ||
+      Notification.permission === "denied";
+
+    $("testNotification").disabled =
+      !granted ||
+      !account?.notificationsEnabled;
+
+    if (!supported) {
+
+      $("notificationStatus").textContent =
+        "Notifications require HTTPS or localhost.";
+
+    } else if (
+      Notification.permission === "denied"
+    ) {
+
+      $("notificationStatus").textContent =
+        "Notifications are blocked by your browser.";
+
+    } else {
+
+      $("notificationStatus").textContent =
+        account?.notificationsEnabled
+          ? "Notifications enabled."
+          : "Notifications disabled.";
+    }
+  }
+
+  function notify(title,body,tag) {
+
+    if (
+      !account?.notificationsEnabled ||
+      !notificationsAvailable() ||
+      Notification.permission !== "granted"
+    ) {
+      return false;
+    }
+
+    try {
+
+      new Notification(title,{
+        body,
+        tag
+      });
+
+      return true;
+
+    } catch {
+
+      return false;
+    }
+  }
+
+  $("notificationToggle").onclick = async () => {
+
+    if (!account || !notificationsAvailable()) return;
+
+    if (account.notificationsEnabled) {
+
+      account.notificationsEnabled = false;
+
+      saveAccount();
+      updateNotificationControls();
+
+      return;
+    }
+
+    const permission =
+      await Notification.requestPermission();
+
+    account.notificationsEnabled =
+      permission === "granted";
+
+    saveAccount();
+    updateNotificationControls();
+
+    if (permission === "granted") {
+
+      notify(
+        "🌙 Snooz notifications enabled",
+        "We'll remind you when it's time to wind down.",
+        "snooz-enabled"
+      );
+    }
+  };
+
+  $("testNotification").onclick = () => {
+
+    const sent = notify(
+      "🌙 Snooz test",
+      "Your browser notifications are working.",
+      "snooz-test"
+    );
+
+    if (!sent) {
+      $("notificationStatus").textContent =
+        "Could not display the notification.";
+    }
+  };
+
+  function notifyOnce(key,time,title,body) {
+
+    if (!account?.notificationsEnabled) return;
+
+    const now = Date.now();
+
+    // Don't send old reminders after
+    // the browser wakes up much later.
+
+    if (
+      now < time ||
+      now - time > 120000
+    ) {
+      return;
+    }
+
+    account.notifiedEvents ||= [];
+
+    if (account.notifiedEvents.includes(key)) {
+      return;
+    }
+
+    if (notify(title,body,key)) {
+
+      account.notifiedEvents.push(key);
+
+      account.notifiedEvents =
+        account.notifiedEvents.slice(-40);
+
+      saveAccount();
+    }
+  }
+
+  function checkNotifications() {
+
+    if (
+      !account ||
+      !Number.isFinite(account.nextStart)
+    ) {
+      return;
+    }
+
+    const start = account.nextStart;
+    const end = start + BUFFER_MS;
+
+    notifyOnce(
+      `start-${start}`,
+      start,
+      "🌙 Snooz: Bedtime",
+      "Your 10-minute wind-down begins now."
+    );
+
+    notifyOnce(
+      `five-${start}`,
+      start + 5 * 60000,
+      "⏳ Five minutes left",
+      "Your bedtime buffer ends in five minutes."
+    );
+
+    notifyOnce(
+      `end-${start}`,
+      end,
+      "💤 Time to sleep",
+      "Your bedtime buffer has ended."
+    );
+
+    if (account.extensionEnd) {
+
+      const extensionEnd = account.extensionEnd;
+
+      notifyOnce(
+        `extension-five-${extensionEnd}`,
+        extensionEnd - 5 * 60000,
+        "⏰ Extra time almost over",
+        "You have five minutes remaining."
+      );
+
+      notifyOnce(
+        `extension-end-${extensionEnd}`,
+        extensionEnd,
+        "🌙 Extra time is up",
+        "It's time to put your phone away."
+      );
+    }
+  }
+
+  // ================================
+  // TIME UTILITIES
+  // ================================
+
+  function validTime(value) {
+    return /^([01]\d|2[0-3]):[0-5]\d$/.test(
+      value || ""
+    );
+  }
+
+  function clock(timestamp) {
+
+    return new Date(timestamp).toLocaleTimeString(
+      undefined,{
+        hour:"numeric",
+        minute:"2-digit"
+      }
+    );
+  }
+
+  function countdown(milliseconds) {
+
+    const total = Math.max(
+      0,
+      Math.ceil(milliseconds / 1000)
+    );
+
+    const hours = Math.floor(total / 3600);
+
+    const minutes = Math.floor(
+      (total % 3600) / 60
+    );
+
+    const seconds = total % 60;
+
+    const mmss =
+      String(minutes).padStart(2,"0") +
+      ":" +
+      String(seconds).padStart(2,"0");
+
+    return hours
+      ? hours + ":" + mmss
+      : mmss;
+  }
+
+  function nextOccurrence(time) {
+
+    const [hours,minutes] =
+      time.split(":").map(Number);
+
+    const date = new Date();
+
+    date.setHours(hours,minutes,0,0);
+
+    if (date.getTime() <= Date.now()) {
+      date.setDate(date.getDate() + 1);
+    }
+
+    return date.getTime();
+  }
+
+  function nextDay(timestamp) {
+
+    const date = new Date(timestamp);
+
+    date.setDate(date.getDate() + 1);
+
+    return date.getTime();
+  }
+
+  // ================================
+  // SAVE BEDTIME ON ENTER / SUBMIT
+  // ================================
+
+  $("bedtimeInput").addEventListener(
+    "input",
+    () => {
+
+      if (!account) return;
+
+      $("bedtimeMessage").textContent =
+        $("bedtimeInput").value !== account.bedtime
+          ? "Unsaved changes. Press Enter or Save bedtime."
+          : "";
+    }
+  );
+
+  $("bedtimeForm").addEventListener(
+    "submit",
+    event => {
+
+      event.preventDefault();
+
+      if (!account) return;
+
+      const selected = $("bedtimeInput").value;
+
+      if (!validTime(selected)) return;
+
+      if (
+        selected !== account.bedtime ||
+        !Number.isFinite(account.nextStart)
+      ) {
+
+        account.bedtime = selected;
+
+        account.nextStart =
+          nextOccurrence(selected);
+
+        account.extensionEnd = null;
+        account.extensionMinutes = 0;
+        account.extensionReason = "";
+
+        account.dismissed = false;
+
+        saveAccount();
+
+        $("nightOverlay").classList.add("hidden");
+      }
+
+      $("bedtimeMessage").textContent =
+        "Saved! Your buffer starts at " +
+        clock(account.nextStart) + ".";
+
+      update();
+    }
+  );
+
+  // ================================
+  // TIMER DISPLAY
+  // ================================
+
+  function setTimer(ms,label,status,percentage) {
+
+    $("timer").textContent = countdown(ms);
+
+    $("timerLabel").textContent = label;
+
+    $("status").textContent = status;
+
+    $("fill").style.width =
+      Math.max(
+        0,
+        Math.min(100,percentage)
+      ) + "%";
+
+    $("progress").setAttribute(
+      "aria-valuenow",
+      String(
+        Math.max(
+          0,
+          Math.min(600,Math.ceil(ms / 1000))
+        )
+      )
+    );
+  }
+
+  function showNight() {
+
+    if (
+      !$("nightOverlay").classList.contains("hidden")
+    ) {
+      return;
+    }
+
+    $("nightNormal").classList.remove("hidden");
+
+    $("overridePanel").classList.add("hidden");
+
+    $("nightOverlay").classList.remove("hidden");
+  }
+
+  function hideNight() {
+    $("nightOverlay").classList.add("hidden");
+  }
+
+  // ================================
+  // AUTOMATIC BEDTIME SCHEDULER
+  // ================================
+
+  function update() {
+
+    if (!account) return;
+
+    if (!validTime(account.bedtime)) {
+
+      $("timer").textContent = "--:--";
+      $("timerLabel").textContent = "Choose your bedtime.";
+      $("status").textContent = "Not set";
+
+      $("startsAt").textContent = "Not set";
+      $("endsAt").textContent = "Not set";
+
+      $("fill").style.width = "0%";
+
+      return;
+    }
+
+    const now = Date.now();
+
+    if (!Number.isFinite(account.nextStart)) {
+
+      account.nextStart =
+        nextOccurrence(account.bedtime);
+
+      saveAccount();
+    }
+
+    // Completed routines advance to the
+    // next scheduled night.
+
+    if (account.dismissed) {
+
+      if (
+        now >= account.nextStart + BUFFER_MS
+      ) {
+
+        do {
+          account.nextStart =
+            nextDay(account.nextStart);
+        } while (
+          account.nextStart <= now
+        );
+
+        account.dismissed = false;
+        account.extensionEnd = null;
+
+        saveAccount();
+      }
+    }
+
+    // Skip stale nights if the webpage was
+    // closed for more than a day.
+
+    else if (
+      now >= nextDay(account.nextStart)
+    ) {
+
+      while (
+        now >= nextDay(account.nextStart)
+      ) {
+
+        account.nextStart =
+          nextDay(account.nextStart);
+      }
+
+      account.extensionEnd = null;
+      account.extensionMinutes = 0;
+      account.extensionReason = "";
+
+      saveAccount();
+    }
+
+    checkNotifications();
+
+    const start = account.nextStart;
+    const end = start + BUFFER_MS;
+
+    $("startsAt").textContent = clock(start);
+    $("endsAt").textContent = clock(end);
+
+    // ACTIVE EXTENSION
+
+    if (
+      account.extensionEnd &&
+      now < account.extensionEnd
+    ) {
+
+      const remaining =
+        account.extensionEnd - now;
+
+      const total =
+        (account.extensionMinutes + 10) * 60000;
+
+      setTimer(
+        remaining,
+        "Emergency extension remaining",
+        "Extra time",
+        remaining / total * 100
+      );
+
+      hideNight();
+      return;
+    }
+
+    // EXTENSION ENDED
+
+    if (
+      account.extensionEnd &&
+      now >= account.extensionEnd &&
+      !account.dismissed
+    ) {
+
+      setTimer(
+        0,
+        "Extra time is over",
+        "Phone away",
+        0
+      );
+
+      showNight();
+      return;
+    }
+
+    // WAITING FOR BEDTIME
+
+    if (now < start) {
+
+      setTimer(
+        start - now,
+        "Time until your bedtime buffer begins",
+        "Scheduled",
+        100
+      );
+
+      hideNight();
+      return;
+    }
+
+    // TEN-MINUTE BUFFER
+
+    if (
+      now >= start &&
+      now < end &&
+      !account.dismissed
+    ) {
+
+      const remaining = end - now;
+
+      setTimer(
+        remaining,
+        "Your 10-minute buffer is running",
+        "Winding down",
+        remaining / BUFFER_MS * 100
+      );
+
+      hideNight();
+      return;
+    }
+
+    // BUFFER FINISHED
+
+    if (!account.dismissed) {
+
+      setTimer(
+        0,
+        "Your bedtime buffer is over",
+        "Phone away",
+        0
+      );
+
+      showNight();
+      return;
+    }
+
+    setTimer(
+      0,
+      "Bedtime completed",
+      "Done",
+      0
+    );
+  }
+
+  // ================================
+  // PUT PHONE AWAY
+  // ================================
+
+  $("sleepDone").onclick = () => {
+
+    if (!account) return;
+
+    account.dismissed = true;
+
+    account.extensionEnd = null;
+    account.extensionMinutes = 0;
+
+    saveAccount();
+
+    hideNight();
+    update();
+  };
+
+  // ================================
+  // EMERGENCY OVERRIDE
+  // ================================
+
+  function countWords(text) {
+
+    const trimmed = text.trim();
+
+    return trimmed
+      ? trimmed.split(/\s+/).length
+      : 0;
+  }
+
+  function updateOverride() {
+
+    const words =
+      countWords($("reason").value);
+
+    const minutes =
+      Number($("minutesSlider").value);
+
+    $("wordCount").textContent =
+      `${words} / 15 words minimum`;
+
+    $("sliderValue").textContent =
+      `${minutes} minutes`;
+
+    $("extensionTotal").textContent =
+      `${minutes + 10} minutes`;
+
+    $("grantOverride").disabled =
+      words < 15;
+
+    $("overrideMessage").textContent = "";
+  }
+
+  $("openOverride").onclick = () => {
+
+    $("nightNormal").classList.add("hidden");
+
+    $("overridePanel").classList.remove("hidden");
+
+    $("reason").value = "";
+    $("minutesSlider").value = "15";
+
+    updateOverride();
+
+    $("reason").focus();
+  };
+
+  $("cancelOverride").onclick = () => {
+
+    $("overridePanel").classList.add("hidden");
+
+    $("nightNormal").classList.remove("hidden");
+  };
+
+  $("reason").addEventListener(
+    "input",
+    updateOverride
+  );
+
+  $("minutesSlider").addEventListener(
+    "input",
+    updateOverride
+  );
+
+  $("grantOverride").onclick = () => {
+
+    if (!account) return;
+
+    const reason =
+      $("reason").value.trim();
+
+    const minutes =
+      Number($("minutesSlider").value);
+
+    if (countWords(reason) < 15) {
+
+      $("overrideMessage").textContent =
+        "Please write at least 15 words.";
+
+      return;
+    }
+
+    if (
+      !Number.isFinite(minutes) ||
+      minutes < 5 ||
+      minutes > 120 ||
+      minutes % 5 !== 0
+    ) {
+
+      $("overrideMessage").textContent =
+        "Choose a valid amount of time.";
+
+      return;
+    }
+
+    const totalMinutes = minutes + 10;
+
+    account.extensionReason = reason;
+
+    account.extensionMinutes = minutes;
+
+    account.extensionEnd =
+      Date.now() + totalMinutes * 60000;
+
+    account.dismissed = false;
+
+    saveAccount();
+
+    notify(
+      "✅ Snooz: Extra time granted",
+      `You have ${totalMinutes} minutes remaining.`,
+      `extension-granted-${account.extensionEnd}`
+    );
+
+    hideNight();
+    update();
+  };
+
+  // ================================
+  // SLEEP HISTORY
+  // ================================
+
+  function renderHistory() {
+
+    if (!account) return;
+
+    const history = account.history || [];
+
+    const container = $("history");
+
+    container.replaceChildren();
+
+    if (!history.length) {
+
+      const message = document.createElement("p");
+
+      message.className = "helper";
+
+      message.textContent =
+        "Your sleep history will appear here.";
+
+      container.append(message);
+      return;
+    }
+
+    history.forEach(entry => {
+
+      const row = document.createElement("div");
+
+      row.className = "historyrow";
+
+      const left = document.createElement("span");
+
+      left.textContent =
+        new Date(entry.date).toLocaleDateString(
+          undefined,{
+            month:"short",
+            day:"numeric"
+          }
+        ) +
+        " · Bed at " +
+        entry.bedTime;
+
+      const right = document.createElement("strong");
+
+      right.textContent = entry.hours + " hrs";
+
+      row.append(left,right);
+
+      container.append(row);
+    });
+  }
+
+  $("sleepForm").addEventListener(
+    "submit",
+    event => {
+
+      event.preventDefault();
+
+      if (!account) return;
+
+      const bedTime =
+        $("actualBedtime").value;
+
+      const hours =
+        Number($("hoursSlept").value);
+
+      if (
+        !validTime(bedTime) ||
+        !Number.isFinite(hours) ||
+        hours < 0 ||
+        hours > 24
+      ) {
+
+        $("sleepMessage").textContent =
+          "Enter a valid bedtime and sleep duration.";
+
+        return;
+      }
+
+      if (
+        (hours < 2 || hours > 14) &&
+        !confirm(
+          `Are you sure you slept ${hours} hours?`
+        )
+      ) {
+        return;
+      }
+
+      account.history ||= [];
+
+      account.history.unshift({
+        date:new Date().toISOString(),
+        bedTime,
+        hours:String(hours)
+      });
+
+      account.history =
+        account.history.slice(0,14);
+
+      saveAccount();
+
+      $("sleepMessage").textContent =
+        "Morning check-in saved!";
+
+      $("sleepForm").reset();
+
+      renderHistory();
+    }
+  );
+
+  // ================================
+  // INITIALIZE
+  // ================================
+
+  const remembered =
+    sessionStorage.getItem(SESSION_KEY);
+
+  const accounts = readAccounts();
+
+  if (
+    remembered &&
+    accounts[remembered]
+  ) {
+
+    login(
+      remembered,
+      accounts[remembered]
+    );
+  }
+
+  setInterval(update,1000);
+
+  document.addEventListener(
+    "visibilitychange",
+    () => {
+
+      if (!document.hidden) {
+        update();
+      }
+    }
+  );
+
+  window.addEventListener("focus",update);
+
+})();
+</script>
+
+</body>
+</html>
